@@ -16,5 +16,6 @@ const byte TFT_CSpin = A2;
 
 const int step_ms = 50;
 const int sinusMax_us = 4583; // average between 0.25/50Hz and 0.25/60Hz
+const int weldTimeWarning = 1000;
 
 #endif

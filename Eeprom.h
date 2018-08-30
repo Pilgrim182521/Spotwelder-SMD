@@ -1,3 +1,6 @@
+#ifndef _Eeprom_H_
+#define _Eeprom_H_
+
 class Eeprom: public EEPROMClassEx
 {
 public:
@@ -12,3 +15,5 @@ public:
   unsigned int pause_ms_addr;
   unsigned int weld_ms_addr;
 };
+
+#endif

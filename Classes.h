@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 
-class UpDownValue
+class UpDownValueStep
 { public:
-    UpDownValue(int value, int step, int minValue, int maxValue);
+    UpDownValueStep(int value, int step, int minValue, int maxValue);
     int up();
     int down();
     operator int();
@@ -15,12 +15,25 @@ class UpDownValue
 
 // ---------------------------------------------------------------------------
 
+class UpDownValueTable
+{ public:
+    UpDownValueTable(unsigned valuesPtr, int *values, unsigned size, int weldTimeWarning=-1);
+    int up();
+    int down();
+    operator int();
+
+    int *values, weldTimeWarning;
+    unsigned valuesPtr, size;
+};
+
+// ---------------------------------------------------------------------------
+
 class MenuItem
 { public:
-    MenuItem(String name, UpDownValue value);
+    MenuItem(String name, UpDownValueTable upDownValueTable);
 
     String name;
-    UpDownValue upDownVal;
+    UpDownValueTable upDownValueTable;
 };
 
 // ---------------------------------------------------------------------------
@@ -30,17 +43,15 @@ class Menu
     void displayStart();
     void control();
     void displayDot(bool on);
-    void TFTinit();
 
   private:
     void displayName(int itemNr, String &name);
     void displayValue(int itemNr, int value, bool focus, bool edit);
-    void drawColorTextLine(int line, int left, String str, uint16_t textColor=TFT_WHITE, uint16_t backgroundColor=TFT_BLACK); // line 0..8
     void displayContinuously();
+    void introtext();
 
     bool editValueMode=0;
-    const int textLeft = 20, fontSize=4, fontHeight=26;
-    const int vertOffset=3; // 240-9*26)/2
+    const int textLeft = 20;
 };
 
 #endif

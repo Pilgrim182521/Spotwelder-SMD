@@ -4,51 +4,66 @@
 void Menu::control()
 { if(!editValueMode)
   { if(upButton.pushed())
-    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal, 0, editValueMode); // un-focus old item
-      displayValue(WeldItemNr, menuItems[WeldItemNr.down()].upDownVal, 1, editValueMode); // focus
+    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable, 0, editValueMode); // un-focus old item
+      displayValue(WeldItemNr, menuItems[WeldItemNr.down()].upDownValueTable, 1, editValueMode); // focus
       return;
     }
     if(downButton.pushed())
-    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal, 0, editValueMode); // un-focus old item
-      displayValue(WeldItemNr, menuItems[WeldItemNr.up()].upDownVal, 1, editValueMode); // focus
+    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable, 0, editValueMode); // un-focus old item
+      displayValue(WeldItemNr, menuItems[WeldItemNr.up()].upDownValueTable, 1, editValueMode); // focus
       return;
     }
     if(selectButton.pushed())
-    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal, 1, editValueMode=1); // add backgound
+    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable, 1, editValueMode=1); // add backgound
       return;
     }
   }
 
   if(editValueMode)
   { if(upButton.pushed())
-    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal.up(), 1, editValueMode);
+    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable.up(), 1, editValueMode);
       return;
     }
     if(downButton.pushed())
-    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal.down(), 1, editValueMode);
+    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable.down(), 1, editValueMode);
       return;
     }
     if(selectButton.pushed())
-    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal, 1, editValueMode=0); // delete backgound
+    { displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable, 1, editValueMode=0); // delete backgound
       eeprom.write();
       return;
     }
   }
 }
+  
+void Menu::introtext()
+{ tft.fillScreen(TFT_BLACK);
+  drawColorTextLine(0, textLeft, version, TFT_YELLOW);
+  drawColorTextLine(2, textLeft, "continuously mode:", TFT_YELLOW);
+  drawColorTextLine(3, textLeft, "down & select", TFT_YELLOW);
+  drawColorTextLine(5, textLeft, "change TFT orientation:", TFT_YELLOW);
+  drawColorTextLine(6, textLeft, "up & down", TFT_YELLOW);
+
+  unsigned long start_ms = millis();
+  while(millis()-start_ms < 2000)
+  { pollAll();
+    if(selectTFTorientation()) break; 
+    if(selectContinuously()) break;
+  }
+}
 
 void Menu::displayStart()
-{ drawColorTextLine(0, textLeft, version, TFT_YELLOW);
-  delay(1000);
-  TFTinit();
+{ introtext();
+  tft.fillScreen(TFT_BLACK);
 
   if(!continuously)
   { for(int i=0; i<3; i++)
     { WeldItemNr.value=i;
       displayName(WeldItemNr, menuItems[WeldItemNr].name);
-      displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal, 0, 0);
+      displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable, 0, 0);
     }
     WeldItemNr.value = 0;
-    displayValue(WeldItemNr, menuItems[WeldItemNr].upDownVal, 1, 0); // item 0 has focus
+    displayValue(WeldItemNr, menuItems[WeldItemNr].upDownValueTable, 1, 0); // item 0 has focus
     displayDot(0);
     drawColorTextLine(8, 0, "   down           up                sel                    ", TFT_YELLOW, TFT_BLUE); // to long text is ok
   }
@@ -67,11 +82,6 @@ void Menu::displayDot(bool on)
 { tft.fillCircle(148, 180, 20, on? TFT_WHITE : 0x64A7/*green*/); // https://ee-programming-notepad.blogspot.nl/2016/10/16-bit-color-generator-picker.html
 }
 
-void Menu::drawColorTextLine(int line, int left, String str, uint16_t textColor, uint16_t backgroundColor)
-{ tft.setTextColor(textColor, backgroundColor);
-  tft.drawString(str.c_str(), left, fontHeight*line+vertOffset, fontSize);
-}
-
 void Menu::displayName(int WeldItemNr, String &name)
 { drawColorTextLine(2*WeldItemNr, textLeft, name, TFT_YELLOW);
 }
@@ -82,48 +92,55 @@ void Menu::displayValue(int WeldItemNr, int value, bool focus, bool edit)
   drawColorTextLine(2*WeldItemNr+1, textLeft, String(value), edit? TFT_BLACK : TFT_WHITE, edit? TFT_CYAN : TFT_BLACK);
 }
 
-void Menu::TFTinit()
-{ tft.init();
-  tft.setRotation(orientation);
-  tft.fillScreen(TFT_BLACK);
+// ---------------------------------------------------------------------------
+
+UpDownValueTable::UpDownValueTable(unsigned valuesPtr, int *values, unsigned size, int weldTimeWarning):
+valuesPtr(valuesPtr), values(values), size(size), weldTimeWarning(weldTimeWarning)
+{
+}
+
+int UpDownValueTable::up()
+{ if(valuesPtr == size-1) valuesPtr = 0;
+  else valuesPtr++;
+  return values[valuesPtr];
+}
+
+int UpDownValueTable::down()
+{ if(valuesPtr == 0) valuesPtr = size-1;
+  else valuesPtr--;
+  return values[valuesPtr];
+}
+
+UpDownValueTable::operator int() // conversion operator, object returns value
+{ return values[valuesPtr];
 }
 
 // ---------------------------------------------------------------------------
 
-UpDownValue::UpDownValue(int value, int step, int minValue, int maxValue):
+UpDownValueStep::UpDownValueStep(int value, int step, int minValue, int maxValue):
 value(value), step(step), minValue(minValue), maxValue(maxValue)
 {
 }
 
-int UpDownValue::up()
+int UpDownValueStep::up()
 { value += step;
   return value = (value > maxValue) ?  minValue : value;
 }
 
-int UpDownValue::down()
+int UpDownValueStep::down()
 { value -= step;
   return value = (value < minValue ) ?  maxValue : value;
 }
 
-UpDownValue::operator int() // conversion operator, object returns value
+UpDownValueStep::operator int() // conversion operator, object returns value
 { return value;
 }
 
 // ---------------------------------------------------------------------------
 
-MenuItem::MenuItem(String name, UpDownValue value):
-name(name), upDownVal(value)
+MenuItem::MenuItem(String name, UpDownValueTable upDownValueTable):
+name(name), upDownValueTable(upDownValueTable)
 {
 }
-
-/*
-  if(downButton.on() && selectButton.on())
-  { preferencesControl();
-    return;
-  }
-
-  drawColorTextLine(2, textLeft, "Set preferences:", TFT_YELLOW);
-  drawColorTextLine(3, textLeft, "press down + sel", TFT_YELLOW);
-*/
 
 
