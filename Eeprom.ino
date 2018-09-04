@@ -1,5 +1,6 @@
 const unsigned maxWrites = 100;
-const unsigned initValue = 3; // take another value for default EEPROM settings
+const unsigned initValue = 9
+; // take another value for default EEPROM settings
 
 void Eeprom::init()
 { setMemPool(0, EEPROMSizeATmega328);

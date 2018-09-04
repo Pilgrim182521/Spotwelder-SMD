@@ -17,12 +17,12 @@ class UpDownValueStep
 
 class UpDownValueTable
 { public:
-    UpDownValueTable(unsigned valuesPtr, int *values, unsigned size, int weldTimeWarning=-1);
+    UpDownValueTable(unsigned valuesPtr, int *values, unsigned size);
     int up();
     int down();
     operator int();
 
-    int *values, weldTimeWarning;
+    int *values;
     unsigned valuesPtr, size;
 };
 

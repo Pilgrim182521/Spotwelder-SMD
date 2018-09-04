@@ -1,4 +1,4 @@
-bool test_without_transformer = 1; // 0 for production firmware, 1 for test without transformer
+bool test_without_transformer = 0; // 0 for production firmware, 1 for test without transformer
 
 /*
 Attention: verify code after upload: ON / OFF
@@ -33,7 +33,7 @@ Version 7.0 2-10-2017 only for smd board and ILI9341 240x320 TFT display
 Version 7.1
 Version 7.1.1 24-4-2018 improvement commits by hlovdal
 Version 7.1.2 27-8-2018 changed the library name to avoid conflicts with other libraries TFT_ILI9341_Bodmer.h
-Version 7.2.0 27-8-2018 added UpDownValueTable, changed introtext, selectContinuously, blinkLed
+Version 7.2.0 27-8-2018 added UpDownValueTable, changed introtext, selectContinuously, blinkLed without delay
 
 Program with FTDI programmer, Extra > Board > Arduino Uno
 
@@ -75,14 +75,14 @@ UpDownValueStep WeldItemNr = UpDownValueStep(0, 1, 0, 2); // value, step, minVal
 Menu menu;
 Eeprom eeprom;
 
-int preweldTimeValues[]={0, 10, 20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 1500, 2000};
-MenuItem preweldTimeItem = MenuItem("Preweld, ms", UpDownValueTable(4, preweldTimeValues, arrayLenght(preweldTimeValues), weldTimeWarning)); // valuesPtr, table, arrayLenght
+int preweldTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000};
+MenuItem preweldTimeItem = MenuItem("Preweld, ms", UpDownValueTable(4, preweldTimeValues, arrayLenght(preweldTimeValues))); // valuesPtr, table, arrayLenght
 
-int pauseTimeValues[]={0, 10, 20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 1500, 2000};
-MenuItem pauseTimeItem = MenuItem("Pause, ms", UpDownValueTable(3, pauseTimeValues, arrayLenght(pauseTimeValues)));
+int pauseTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000};
+MenuItem pauseTimeItem = MenuItem("Pause, ms", UpDownValueTable(14, pauseTimeValues, arrayLenght(pauseTimeValues)));
 
-int weldTimeValues[]={0, 10, 20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 1500, 2000};
-MenuItem weldTimeItem = MenuItem("Weld time, ms", UpDownValueTable(9, weldTimeValues, arrayLenght(weldTimeValues), weldTimeWarning));
+int weldTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000};
+MenuItem weldTimeItem = MenuItem("Weld time, ms", UpDownValueTable(11, weldTimeValues, arrayLenght(weldTimeValues)));
 
 MenuItem menuItems[] = {preweldTimeItem, pauseTimeItem, weldTimeItem};
 bool continuously;

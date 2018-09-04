@@ -94,8 +94,8 @@ void Menu::displayValue(int WeldItemNr, int value, bool focus, bool edit)
 
 // ---------------------------------------------------------------------------
 
-UpDownValueTable::UpDownValueTable(unsigned valuesPtr, int *values, unsigned size, int weldTimeWarning):
-valuesPtr(valuesPtr), values(values), size(size), weldTimeWarning(weldTimeWarning)
+UpDownValueTable::UpDownValueTable(unsigned valuesPtr, int *values, unsigned size):
+valuesPtr(valuesPtr), values(values), size(size)
 {
 }
 
