@@ -75,13 +75,13 @@ UpDownValueStep WeldItemNr = UpDownValueStep(0, 1, 0, 2); // value, step, minVal
 Menu menu;
 Eeprom eeprom;
 
-int preweldTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000};
+int preweldTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000};
 MenuItem preweldTimeItem = MenuItem("Preweld, ms", UpDownValueTable(4, preweldTimeValues, arrayLenght(preweldTimeValues))); // valuesPtr, table, arrayLenght
 
-int pauseTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000};
+int pauseTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000};
 MenuItem pauseTimeItem = MenuItem("Pause, ms", UpDownValueTable(14, pauseTimeValues, arrayLenght(pauseTimeValues)));
 
-int weldTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000};
+int weldTimeValues[]={10, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000};
 MenuItem weldTimeItem = MenuItem("Weld time, ms", UpDownValueTable(11, weldTimeValues, arrayLenght(weldTimeValues)));
 
 MenuItem menuItems[] = {preweldTimeItem, pauseTimeItem, weldTimeItem};
